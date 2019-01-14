@@ -20,8 +20,9 @@ function [J, grad] = costFunctionReg(theta, X, y, lambda)
   theta_pertama = theta(1)
 % (lambda/2m) * sum(theta_dari_2 .^ 2)
   theta_dari_2 = theta(2:end, :);
-  koef_lambda_dibagi_2m = lambda / ((1/2) * m);
-  sum_row_2_kebawah_pangkat_2 = sum(theta_dari_2 .^ 2);
+  theta_pasang_lagi = [0;theta_dari_2];
+  koef_lambda_dibagi_2m = lambda /(2* m);
+  sum_row_2_kebawah_pangkat_2 = sum(theta_pasang_lagi .^ 2);
   
   regularization_value_J = koef_lambda_dibagi_2m * sum_row_2_kebawah_pangkat_2;
   
@@ -40,7 +41,10 @@ function [J, grad] = costFunctionReg(theta, X, y, lambda)
   
   if_1 = y' * log(sigmoid_base_hypothesis_value);
   if_0 = (1-y)' * log(1 - sigmoid_base_hypothesis_value);
-
+  
+  theta_dua_kebawah = theta(2:size(theta));
+  theta_reg = [0;theta_dua_kebawah];
+  
   
   if_combined = -1 * (if_1 + if_0);
   
@@ -50,9 +54,11 @@ function [J, grad] = costFunctionReg(theta, X, y, lambda)
   J_pertama = (koef * sum_of_if_combined);
   potongan_J_pertama = J_pertama(1,:);
   
+  %regularization_value_J = koef_lambda_dibagi_2m * theta_reg' * theta_reg;
+  
   J = (koef * sum_of_if_combined) + regularization_value_J;
-  J(1) = potongan_J_pertama; 
-   J = J;
+  %J(1) = potongan_J_pertama; 
+   %J = J;
   grad_pertama = grad(1,:);
   
   grad_pertama = (koef * (X' * (sigmoid_base_hypothesis_value - y)));
